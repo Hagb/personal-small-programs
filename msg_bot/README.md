@@ -22,3 +22,12 @@
 - [Bot.py](Bot.py)
 
 其中群号在 [realGroups.py](realGroups.py)，已经隐去。
+
+另有
+
+- [LanBotTest.py](LanBotTest.py): coolq.py、LanBot.py 使用例子
+- [RSSBotTest.py](RSSBotTest.py): coolq.py、RSSBot.py 使用例子
+
+## 许可证
+
+[GNU AGPL v3](LICENSE.md)
