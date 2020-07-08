@@ -101,7 +101,12 @@ class MiraiGroupMsg_sender(Msg_sender):
                                   }),
                                   headers={'Content-Type': 'application/json'})
         miraiPost.encoding = miraiPost.apparent_encoding
-        miraiJson = json.loads(miraiPost.text)
+        try:
+            miraiJson = json.loads(miraiPost.text)
+        except json.decoder.JSONDecodeError as e:
+            print(e)
+            print(miraiPost.text)
+            return False
         if miraiJson['code'] == 0:
             return True
         else:

@@ -1,31 +1,34 @@
-import coolq
 import LanBot
 import RSSBot
 import time
 import Mirai
 import realGroups
 
-miraiSession = Mirai.MiraiSession('keyofhagb', qqID=realGroups.qqID_test)
+KEY = 'keyofhagb'
 
-testcq = [coolq.CqGroupMsg_sender(group=realGroups.testG)
-          ] + [Mirai.MiraiGroupMsg_sender(realGroups.testG, miraiSession)]
+miraiSession = Mirai.MiraiSession(KEY, qqID=realGroups.qqID)
+miraiSessionTest = Mirai.MiraiSession(KEY, qqID=realGroups.qqID_test)
+
+testcq = [Mirai.MiraiGroupMsg_sender(realGroups.testG, miraiSession)
+          ] + [Mirai.MiraiGroupMsg_sender(realGroups.testG, miraiSessionTest)]
 
 jwccqs = [
-    coolq.CqGroupMsg_sender(group=group) for group in
+    Mirai.MiraiGroupMsg_sender(group, miraiSession) for group in
     [realGroups.mathGradeG, realGroups.lanWaterG, realGroups.otherCampusG]
 ]
 
 youthcqs = [
-    coolq.CqGroupMsg_sender(group=group) for group in
+    Mirai.MiraiGroupMsg_sender(group, miraiSession) for group in
     [realGroups.mathOtherG, realGroups.otherCampusG, realGroups.testG]
 ]
 
-mathcqs = [coolq.CqGroupMsg_sender(group=realGroups.mathGradeG)]
+mathcqs = [Mirai.MiraiGroupMsg_sender(realGroups.mathGradeG, miraiSession)]
 lancqs = [
-    coolq.CqGroupMsg_sender(group=group) for group in [realGroups.lanNotifyG]
-] + [Mirai.MiraiGroupMsg_sender(realGroups.lanTestG, miraiSession)]
+    Mirai.MiraiGroupMsg_sender(realGroups.lanNotifyG, miraiSession),
+    Mirai.MiraiGroupMsg_sender(realGroups.lanTestG, miraiSession)
+]
 netcqs = [
-    coolq.CqGroupMsg_sender(group=group)
+    Mirai.MiraiGroupMsg_sender(group, miraiSession)
     for group in [realGroups.lanNotifyG, realGroups.lanWaterG]
 ]
 
@@ -64,17 +67,23 @@ def rssRun():
     netbot.run()
 
 
-while True:
+def run():
+    global n
     miraiSession.login()
+    miraiSessionTest.login()
     miraiSession.verify()
+    miraiSessionTest.verify()
     if not n:
         rssRun()
     if not n % 2:
         for i in testcq:
             i.sendMsg(time.asctime())
-
-#    rssbot2.run()
     n = (n + 1) % 6
     lanbot.run()
     miraiSession.release()
+    miraiSessionTest.release()
+
+
+while True:
+    run()
     time.sleep(5 * 60)
